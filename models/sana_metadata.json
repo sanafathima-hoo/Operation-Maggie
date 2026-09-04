@@ -1,0 +1,13 @@
+{
+  "identity": "sana",
+  "total_images": 50,
+  "valid_faces": 50,
+  "embedding_dimension": 128,
+  "threshold": 0.45,
+  "all_embeddings_included": true,
+  "framework": "Frego Browser ML v1.0",
+  "model_backbone": "faceRecognitionNet (vladmandic/face-api)",
+  "backend": "WebGL / TensorFlow.js",
+  "created_at": "2026-09-03T17:21:01.579Z",
+  "trained_at": "2026-09-03T17:44:48.837Z"
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MAGGI BOWL — Admin Dashboard</title>
+  <meta name="description" content="Admin dashboard for Maggi Bowl Smart Security System — access logs and enrolled users."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <link rel="stylesheet" href="/static/css/admin.css"/>
+</head>
+<body class="admin-body">
+
+  <div class="noodle-bg" aria-hidden="true">
+    <svg class="noodle-svg noodle-tl" viewBox="0 0 200 200" fill="none">
+      <path d="M10 180 Q 60 20 120 100 Q 180 180 160 60" stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo-block">
+      <div class="logo-bowl">🍜</div>
+      <div class="logo-text">
+        <span class="logo-maggi">MAGGI</span>
+        <span class="logo-bowl-label">ADMIN DASHBOARD</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-chip">
+        <span class="status-dot" id="arduinoDot"></span>
+        <span id="arduinoLabel">Checking…</span>
+      </div>
+      <a href="/" class="admin-link">🔙 Terminal</a>
+    </div>
+  </header>
+
+  <main class="admin-main">
+
+    <!-- ── Stats Row ── -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-val" id="statUsers">—</div>
+        <div class="stat-lbl">Enrolled Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-val" id="statGranted">—</div>
+        <div class="stat-lbl">Access Granted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🚨</div>
+        <div class="stat-val" id="statDenied">—</div>
+        <div class="stat-lbl">Intruder Alerts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📡</div>
+        <div class="stat-val" id="statArduino">—</div>
+        <div class="stat-lbl">Arduino Status</div>
+      </div>
+    </section>
+
+    <div class="admin-grid">
+
+      <!-- ── Enrolled Users ── -->
+      <section class="admin-card" id="usersSection">
+        <div class="admin-card-header">
+          <h2>👥 Enrolled Members</h2>
+        </div>
+        <div id="userCards" class="user-cards-grid">
+          <div class="user-card skeleton-card"></div>
+          <div class="user-card skeleton-card"></div>
+        </div>
+      </section>
+
+      <!-- ── Access Log ── -->
+      <section class="admin-card" id="logsSection">
+        <div class="admin-card-header">
+          <h2>📋 Access Log</h2>
+          <button class="refresh-btn" onclick="loadLogs()">↻ Refresh</button>
+        </div>
+        <div class="table-wrap">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Timestamp</th>
+                <th>Identity</th>
+                <th>Confidence</th>
+                <th>Result</th>
+                <th>Flags</th>
+              </tr>
+            </thead>
+            <tbody id="logTableBody">
+              <tr><td colspan="6" class="loading-row">Loading logs…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script>
+    // ─── Health Check ───────────────────────────
+    async function loadHealth() {
+      try {
+        const r = await fetch('/api/health');
+        const d = await r.json();
+        const dot   = document.getElementById('arduinoDot');
+        const label = document.getElementById('arduinoLabel');
+        const badge = document.getElementById('statArduino');
+        if (d.arduino_connected) {
+          dot.style.background = '#22c55e';
+          label.textContent = `Connected (${d.com_port})`;
+          badge.textContent = 'Online';
+          badge.style.color = '#22c55e';
+        } else {
+          dot.style.background = '#ef4444';
+          label.textContent = 'Disconnected';
+          badge.textContent = 'Offline';
+          badge.style.color = '#ef4444';
+        }
+        document.getElementById('statUsers').textContent = d.enrolled_count;
+      } catch(e) {
+        document.getElementById('arduinoLabel').textContent = 'Error';
+      }
+    }
+
+    // ─── Enrolled Users ──────────────────────────
+    async function loadUsers() {
+      try {
+        const r = await fetch('/api/users?summary=1');
+        const d = await r.json();
+        const container = document.getElementById('userCards');
+        container.innerHTML = '';
+        if (!d.users.length) {
+          container.innerHTML = '<p class="no-data">No users enrolled</p>';
+          return;
+        }
+        d.users.forEach(u => {
+          const card = document.createElement('div');
+          card.className = 'user-card';
+          const initials = u.name.slice(0,2).toUpperCase();
+          card.innerHTML = `
+            <div class="user-avatar">${initials}</div>
+            <div class="user-info">
+              <div class="user-name">${u.name.charAt(0).toUpperCase() + u.name.slice(1)}</div>
+              <div class="user-imgs">📸 ${u.total_images} training images</div>
+            </div>
+            <div class="user-status badge-green">✓ Active</div>
+          `;
+          container.appendChild(card);
+        });
+      } catch(e) {
+        document.getElementById('userCards').innerHTML = '<p class="no-data">Failed to load users</p>';
+      }
+    }
+
+    // ─── Access Logs ─────────────────────────────
+    async function loadLogs() {
+      try {
+        const r = await fetch('/api/logs');
+        const d = await r.json();
+        const tbody = document.getElementById('logTableBody');
+        tbody.innerHTML = '';
+
+        let granted = 0, denied = 0;
+
+        if (!d.logs.length) {
+          tbody.innerHTML = '<tr><td colspan="6" class="loading-row">No logs yet</td></tr>';
+          return;
+        }
+
+        d.logs.forEach(log => {
+          if (log.granted) granted++; else denied++;
+
+          const tr = document.createElement('tr');
+          const ts = new Date(log.timestamp).toLocaleString('en-IN', {
+            day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit', second:'2-digit'
+          });
+
+          const resultBadge = log.granted
+            ? `<span class="badge badge-green">✅ Granted</span>`
+            : log.alarm
+              ? `<span class="badge badge-alarm">🚨 Alarm</span>`
+              : `<span class="badge badge-red">🚫 Denied</span>`;
+
+          const flags = [];
+          if (log.override) flags.push('<span class="flag">🔑 Override</span>');
+          if (log.alarm)    flags.push('<span class="flag flag-red">🚨 Alarm</span>');
+
+          const identity = log.identity === 'sensor_trigger' ? '📡 IR Trigger' :
+                           log.identity === 'password_override' ? '🔑 Override' :
+                           log.identity === 'intruder' ? '👤 Intruder' :
+                           `👤 ${log.identity.charAt(0).toUpperCase() + log.identity.slice(1)}`;
+
+          tr.innerHTML = `
+            <td class="mono">${log.id}</td>
+            <td class="mono small">${ts}</td>
+            <td>${identity}</td>
+            <td>${log.confidence ? log.confidence + '%' : '—'}</td>
+            <td>${resultBadge}</td>
+            <td>${flags.join(' ') || '—'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById('statGranted').textContent = granted;
+        document.getElementById('statDenied').textContent  = denied;
+      } catch(e) {
+        document.getElementById('logTableBody').innerHTML =
+          '<tr><td colspan="6" class="loading-row">Error loading logs</td></tr>';
+      }
+    }
+
+    // ─── Init ────────────────────────────────────
+    loadHealth();
+    loadUsers();
+    loadLogs();
+    setInterval(loadHealth, 5000);
+    setInterval(loadLogs, 10000);
+  </script>
+</body>
+</html>

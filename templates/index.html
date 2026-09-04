@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAGGI BOWL — Smart Security System</title>
+  <meta name="description" content="AI-powered face recognition security terminal. 2-Minute Protection by Maggi Bowl." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body class="state-idle">
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- BACKGROUND NOODLE DECORATIONS          -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="noodle-bg" aria-hidden="true">
+    <svg class="noodle-svg noodle-tl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 180 Q 60 20 120 100 Q 180 180 160 60" stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <path d="M30 160 Q 80 40 140 80 Q 190 120 170 20" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"/>
+    </svg>
+    <svg class="noodle-svg noodle-br" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M190 20 Q 140 180 80 100 Q 20 20 40 140" stroke="currentColor" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <path d="M170 40 Q 120 160 60 120 Q 10 80 30 180" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- HEADER                                 -->
+  <!-- ═══════════════════════════════════════ -->
+  <header class="app-header">
+    <div class="logo-block">
+      <div class="logo-bowl">🍜</div>
+      <div class="logo-text">
+        <span class="logo-maggi">MAGGI</span>
+        <span class="logo-bowl-label">BOWL GUARD</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-chip" id="wsStatus">
+        <span class="status-dot" id="wsDot" style="background:#555"></span>
+        <span id="wsLabel">WS: connecting…</span>
+      </div>
+      <div class="status-chip" id="arduinoStatus">
+        <span class="status-dot" id="arduinoDot"></span>
+        <span id="arduinoLabel">Connecting…</span>
+      </div>
+      <button
+        id="testTriggerBtn"
+        onclick="simulateTrigger()"
+        style="background:linear-gradient(135deg,#C0392B,#E74C3C);color:#fff;font-weight:700;font-size:0.75rem;padding:7px 14px;border:none;border-radius:999px;cursor:pointer;letter-spacing:0.04em;"
+        title="Simulate IR sensor trigger (for testing)">
+        ⚡ Test Trigger
+      </button>
+      <a href="/admin" class="admin-link" id="adminBtn">📋 Admin</a>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- MAIN TERMINAL                          -->
+  <!-- ═══════════════════════════════════════ -->
+  <main class="terminal" id="mainTerminal">
+
+    <!-- ─── LEFT PANEL ─── -->
+    <aside class="panel panel-left">
+      <div class="panel-card" id="systemStatusCard">
+        <h3 class="panel-title">System Status</h3>
+        <div class="status-row">
+          <span>🛡️ Guard</span>
+          <span class="badge badge-green" id="guardStatus">ACTIVE</span>
+        </div>
+        <div class="status-row">
+          <span>📡 Arduino</span>
+          <span class="badge" id="arduinoBadge">—</span>
+        </div>
+        <div class="status-row">
+          <span>🧠 AI Model</span>
+          <span class="badge" id="modelBadge">Loading…</span>
+        </div>
+        <div class="status-row">
+          <span>👥 Users</span>
+          <span class="badge badge-blue" id="usersBadge">—</span>
+        </div>
+      </div>
+
+      <div class="panel-card" id="enrolledUsersCard">
+        <h3 class="panel-title">Enrolled Members</h3>
+        <div id="enrolledList" class="enrolled-list">
+          <div class="user-chip skeleton"></div>
+          <div class="user-chip skeleton"></div>
+        </div>
+      </div>
+
+      <div class="panel-card noodle-tip">
+        <div class="tip-icon">🍜</div>
+        <p class="tip-text">"2-Minute Protection,<br/>Zero Compromise."</p>
+      </div>
+    </aside>
+
+
+    <!-- ─── CAMERA SECTION ─── -->
+    <section class="camera-section">
+
+      <!-- State Banner -->
+      <div class="state-banner" id="stateBanner">
+        <div class="banner-icon" id="bannerIcon">🛡️</div>
+        <div class="banner-text" id="bannerText">STANDBY</div>
+        <div class="banner-sub"  id="bannerSub">Awaiting IR sensor trigger…</div>
+      </div>
+
+      <!-- Camera Card -->
+      <div class="camera-card" id="cameraCard">
+        <div class="camera-idle-overlay" id="idleOverlay">
+          <div class="idle-noodle">🍜</div>
+          <p class="idle-msg">Camera offline<br/><span>Will activate when motion is detected</span></p>
+          <div class="scan-ring"></div>
+        </div>
+
+        <video id="videoEl" autoplay muted playsinline></video>
+        <canvas id="overlayCanvas"></canvas>
+
+        <!-- Scan Grid -->
+        <div class="scan-grid" id="scanGrid">
+          <div class="scan-line"></div>
+        </div>
+      </div>
+
+      <!-- Recognition Result -->
+      <div class="result-card" id="resultCard">
+        <div class="result-icon" id="resultIcon">—</div>
+        <div class="result-name" id="resultName">Scanning…</div>
+        <div class="result-confidence">
+          <div class="conf-bar-wrap">
+            <div class="conf-bar" id="confBar" style="width:0%"></div>
+          </div>
+          <span id="confLabel">—</span>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ─── RIGHT PANEL ─── -->
+    <aside class="panel panel-right">
+      <div class="panel-card" id="recentCard">
+        <h3 class="panel-title">Recent Events</h3>
+        <div id="recentList" class="recent-list">
+          <p class="no-events">No events yet</p>
+        </div>
+      </div>
+
+      <div class="panel-card noodle-tip noodle-tip-red">
+        <div class="tip-icon">⚠️</div>
+        <p class="tip-text">IR sensor active on<br/><strong>Pin 10</strong> — COM5</p>
+      </div>
+    </aside>
+
+  </main>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- INTRUDER OVERLAY                       -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="intruder-overlay" id="intruderOverlay" style="display:none;">
+    <div class="intruder-modal" id="intruderModal">
+      <div class="intruder-header">
+        <div class="intruder-icon">⚠️</div>
+        <h2>INTRUDER DETECTED</h2>
+        <p>Unrecognised face. Enter override password to gain access.</p>
+      </div>
+
+      <div class="password-attempts" id="attemptsBar">
+        <span class="attempt-dot active" id="dot1"></span>
+        <span class="attempt-dot active" id="dot2"></span>
+        <span class="attempt-dot active" id="dot3"></span>
+      </div>
+
+      <form class="password-form" id="passwordForm" onsubmit="return false;">
+        <div class="password-input-wrap">
+          <input
+            type="password"
+            id="passwordInput"
+            class="password-input"
+            placeholder="Enter override password…"
+            autocomplete="off"
+            maxlength="30"
+          />
+          <button type="submit" class="password-submit" id="passwordSubmit" onclick="submitPassword()">
+            ENTER
+          </button>
+        </div>
+        <p class="password-hint" id="passwordHint"></p>
+      </form>
+
+      <button class="dismiss-btn" id="dismissBtn" onclick="dismissIntruder()">
+        Dismiss (keep monitoring)
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- ALARM OVERLAY                          -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="alarm-overlay" id="alarmOverlay" style="display:none;">
+    <div class="alarm-content">
+      <div class="alarm-icon">🚨</div>
+      <h2>SECURITY ALARM TRIGGERED</h2>
+      <p>Maximum password attempts exceeded.<br/>Arduino alarm activated.</p>
+      <button onclick="resetSystem()" class="reset-btn">Reset System</button>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCRIPTS                                -->
+  <!-- ═══════════════════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+  <script src="/static/js/recognition.js"></script>
+
+</body>
+</html>
