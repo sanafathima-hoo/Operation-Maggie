@@ -3,17 +3,17 @@
 
 
 
-# Operation Maggi (Maggi Bowl Guard) 🍜🎯
+# Operation Maggi 
 
 
 ## Basic Details
-### Team Name: [Insert Team Name]
+### Team Name: [Null Characters]
 
 
 ### Team Members
-- Team Lead: Sana Fathima A - [College]
-- Member 2: Nidhi - [College]
-- Member 3: [Name] - [College]
+- Member 1: Sana Fathima A - [MUTHOOT INSTITUTE OF SCIENCE AND TECHNOLOGY]
+- Member 2: Nidhi - [[MUTHOOT INSTITUTE OF SCIENCE AND TECHNOLOGY]]
+  
 
 ### Project Description
 An AI-powered, hardware-integrated security terminal designed to protect the most valuable asset in any household: a bowl of Maggi noodles. It uses IR motion detection, real-time facial recognition, and a hardware alarm system to aggressively deter noodle thieves.
