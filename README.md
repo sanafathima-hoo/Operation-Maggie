@@ -11,8 +11,8 @@
 
 
 ### Team Members
-- Member 1: Sana Fathima A - [MUTHOOT INSTITUTE OF SCIENCE AND TECHNOLOGY]
-- Member 2: Nidhi Krishna T U - [[MUTHOOT INSTITUTE OF SCIENCE AND TECHNOLOGY]]
+- Member 1: Sana Fathima A - [[MUTHOOT INSTITUTE OF TECHNOLOGY AND SCIENCE]
+- Member 2: Nidhi Krishna T U - [[MUTHOOT INSTITUTE OF TECHNOLOGY AND SCIENCE]
   
 
 ### Project Description
