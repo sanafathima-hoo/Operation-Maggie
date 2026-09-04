@@ -1,3 +1,4 @@
+
 <img width="1280" height="640" alt="git (1)" src="https://github.com/user-attachments/assets/8920b256-2ba8-4988-b824-5351134eb4bd" />
 
 
@@ -67,8 +68,9 @@ For Software:
 *Workflow: IR Sensor -> Arduino -> Serial Port -> Python Flask -> SSE Stream -> Browser WebRTC Camera -> face-api.js -> Python Access Log.*
 
 For Hardware:
-
+<img width="867" height="1156" alt="WhatsApp Image 2026-09-04 at 08 38 42" src="https://github.com/user-attachments/assets/ed2a6313-34b0-4e1b-a414-410f28d828c8" />
 # Schematic & Circuit
+
 ![Circuit](Placeholder: Add your circuit diagram here)
 *Pin connections: IR Sensor on Pin 10, Laser on Pin 11, Buzzer on Pin 12.*
 
