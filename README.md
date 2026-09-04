@@ -33,7 +33,7 @@ For Software:
 - **Tools:** Server-Sent Events (SSE) for real-time hardware-to-browser communication
 
 For Hardware:
-- **Main components:** Arduino UNO, IR Obstacle Sensor, Buzzer, Laser Diode Module.
+- **Main components:** Arduino UNO, IR Obstacle Sensor, Buzzer.
 - **Specifications:** 9600 Baud Rate Serial Communication via USB (COM Port).
 - **Tools required:** Arduino IDE, Jumper wires, Breadboard.
 
@@ -54,13 +54,21 @@ Then navigate to `http://localhost:5000` in your browser.
 For Software:
 
 # Screenshots (Add at least 3)
+
 ![Screenshot1](Placeholder: Add screenshot of Standby mode)
+<img width="1891" height="871" alt="Screenshot 2026-09-04 074146" src="https://github.com/user-attachments/assets/96c79e07-cee9-45ff-a1f4-d8a0cd0e5c09" />
+
+
 *The idle standby screen waiting for an IR trigger.*
 
 ![Screenshot2](Placeholder: Add screenshot of Scanning mode)
+
+<img width="1886" height="950" alt="Screenshot 2026-09-04 074107" src="https://github.com/user-attachments/assets/7671a87f-55aa-4f8b-a082-d6bb6898dd29" />
+
 *The system actively scanning an intruder's face.*
 
 ![Screenshot3](Placeholder: Add screenshot of Alarm/Intruder mode)
+<img width="1917" height="852" alt="Screenshot 2026-09-04 074117" src="https://github.com/user-attachments/assets/9dc24fb5-3e5e-468e-921d-7d27ce3fa51f" />
 *The password override modal and alarm triggered.*
 
 # Diagrams
@@ -68,8 +76,8 @@ For Software:
 *Workflow: IR Sensor -> Arduino -> Serial Port -> Python Flask -> SSE Stream -> Browser WebRTC Camera -> face-api.js -> Python Access Log.*
 
 For Hardware:
-<img width="867" height="1156" alt="WhatsApp Image 2026-09-04 at 08 38 42" src="https://github.com/user-attachments/assets/ed2a6313-34b0-4e1b-a414-410f28d828c8" />
 # Schematic & Circuit
+<img width="867" height="1156" alt="WhatsApp Image 2026-09-04 at 08 38 42" src="https://github.com/user-attachments/assets/97063df5-2956-4890-9904-f92f122c6332" />
 
 ![Circuit](Placeholder: Add your circuit diagram here)
 *Pin connections: IR Sensor on Pin 10, Laser on Pin 11, Buzzer on Pin 12.*
@@ -89,16 +97,16 @@ For Hardware:
 
 ### Project Demo
 # Video
-[Add your demo video link here]
+[https://drive.google.com/file/d/1kUQqfYaTs-0ToiqTA7mC0Lzi5rrlR68e/view?usp=drivesdk]
 *Demonstrating the full flow from motion detection to facial recognition and alarm triggering.*
 
 # Additional Demos
 [Add any extra demo materials/links]
 
 ## Team Contributions
-- Sana Fathima A: [Specific contributions]
-- Nidhi: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- Sana Fathima A: [Both hardware and software]
+- Nidhi: [Both hardware and software]
+
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
